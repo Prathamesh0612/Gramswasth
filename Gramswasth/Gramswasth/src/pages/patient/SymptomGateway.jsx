@@ -2,8 +2,9 @@ import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Leaf, Activity, AlertCircle, Info, Zap, Mic, MicOff, Phone, Video, Loader2 } from 'lucide-react';
+import { ArrowLeft, Leaf, Activity, AlertCircle, Info, Zap, Mic, MicOff, Phone, Video, Loader2, CheckCircle } from 'lucide-react';
 import { consultationAPI } from '../../services/api';
+import { DISEASES } from '../../data/symptomData';
 
 // TIER 1: Ambulance / ER (Immediate Life Threat)
 const criticalKeywords = [
@@ -31,8 +32,10 @@ export default function SymptomGateway() {
 
    const [transcript, setTranscript] = useState('');
    const [isListening, setIsListening] = useState(false);
-   const [triageState, setTriageState] = useState('INPUT'); // 'INPUT', 'CRITICAL', 'URGENT'
+   const [triageState, setTriageState] = useState('INPUT'); // 'INPUT', 'CRITICAL', 'URGENT', 'LOCAL_RESULT'
    const [isCreating, setIsCreating] = useState(false);
+   const [bandwidth, setBandwidth] = useState('low'); // 'low', 'high'
+   const [localResult, setLocalResult] = useState(null);
    const recognitionRef = useRef(null);
 
    const startEmergencyConsultation = async () => {
@@ -104,6 +107,21 @@ export default function SymptomGateway() {
    const handleAnalyze = () => {
       if (!transcript.trim()) return;
 
+      // Check Bandwidth
+      if (bandwidth === 'low') {
+         // USE LOCAL KNOWLEDGE CACHE
+         const words = transcript.toLowerCase().split(/\W+/);
+         const matched = DISEASES.find(d => 
+            d.keywords.some(k => words.includes(k.toLowerCase()))
+         );
+
+         if (matched) {
+            setLocalResult(matched);
+            setTriageState('LOCAL_RESULT');
+            return;
+         }
+      }
+
       // 1. Check Tier 1 (Critical) -> Triggers Red Ambulance UI
       const foundCritical = checkKeywords(transcript, criticalKeywords);
       if (foundCritical.length > 0) {
@@ -122,8 +140,6 @@ export default function SymptomGateway() {
       const foundMinor = checkKeywords(transcript, minorKeywords);
 
       if (foundMinor.length > 0) {
-         // SUCCESS! We found minor symptoms. 
-         // NOTE: Make sure '/patient/consultation' is the correct route for your solution page!
          navigate('/patient/consultation', {
             state: {
                rawTranscript: transcript,
@@ -131,7 +147,6 @@ export default function SymptomGateway() {
             }
          });
       } else {
-         // 4. Fallback -> Only go to the manual questionnaire if the app has NO idea what they said
          navigate('/patient/questionnaire');
       }
    };
@@ -142,10 +157,18 @@ export default function SymptomGateway() {
             <button onClick={() => navigate('/patient/dashboard')} className="p-2 rounded-xl hover:bg-cream-100">
                <ArrowLeft size={20} className="text-gray-500" />
             </button>
-            <div className="w-7 h-7 bg-sage-500 rounded-lg flex items-center justify-center">
-               <Leaf size={13} className="text-white" />
+            <div className="flex-1 flex flex-col">
+               <h1 className="font-bold text-gray-800 leading-none">Symptom Assessment</h1>
+               <div className="flex items-center gap-1.5 mt-1" onClick={() => setBandwidth(b => b === 'low' ? 'high' : 'low')}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${bandwidth === 'high' ? 'bg-green-500' : 'bg-amber-500'}`} />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                     {bandwidth === 'high' ? 'High Speed: AI Active' : 'Low Speed: Local Cache'}
+                  </span>
+               </div>
             </div>
-            <h1 className="font-bold text-gray-800">Symptom Assessment</h1>
+            <div className="w-8 h-8 bg-sage-500 rounded-lg flex items-center justify-center">
+               <Leaf size={14} className="text-white" />
+            </div>
          </header>
 
          <main className="flex-1 px-4 py-8 max-w-md mx-auto w-full flex flex-col gap-6">
@@ -206,46 +229,43 @@ export default function SymptomGateway() {
                   </motion.div>
                )}
 
-               {/* TIER 2: URGENT STATE (Online Doctor) */}
-               {triageState === 'URGENT' && (
+               {/* LOCAL CACHE RESULT STATE */}
+               {triageState === 'LOCAL_RESULT' && localResult && (
                   <motion.div
-                     key="urgent-stage"
-                     initial={{ opacity: 0, scale: 0.9 }}
-                     animate={{ opacity: 1, scale: 1 }}
-                     className="flex flex-col items-center text-center gap-6 mt-4"
+                     key="local-stage"
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     className="flex flex-col gap-5"
                   >
-                     <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 animate-pulse">
-                        <AlertCircle size={48} />
+                     <div className="bg-sage-50 border border-sage-200 rounded-2xl p-4 flex items-center gap-3">
+                        <CheckCircle className="text-sage-500" size={20} />
+                        <span className="text-xs font-bold text-sage-800">Analysis completed using Offline Knowledge Cache</span>
                      </div>
 
-                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Doctor Consultation Recommended</h2>
-                        <p className="text-gray-600 px-4">
-                           Your symptoms require professional medical advice, but do not appear to be life-threatening.
+                     <div className="gs-card flex flex-col gap-3 border-2 border-sage-300">
+                        <div className="flex items-center justify-between">
+                           <h3 className="font-bold text-gray-900 text-lg">{localResult.name}</h3>
+                           {localResult.urgent && <span className="chip bg-red-100 text-red-600 font-bold text-[10px]">URGENT</span>}
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed bg-white rounded-xl p-3 border border-sage-100">
+                           {localResult.remedy}
                         </p>
                      </div>
 
-                     <div className="w-full bg-orange-50 border border-orange-200 rounded-2xl p-5 mt-2">
+                     <div className="flex flex-col gap-3">
                         <button
-                           onClick={startEmergencyConsultation}
-                           disabled={isCreating}
-                           className="w-full py-4 bg-[#A0522D] text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:bg-[#8B4513] transition-colors disabled:opacity-50"
+                           onClick={() => navigate('/patient/consultation')}
+                           className="w-full py-4 bg-sage-600 text-white rounded-xl font-bold"
                         >
-                           {isCreating ? <Loader2 size={20} className="animate-spin" /> : <Video size={20} />}
-                           Emergency: Tap for immediate doctor help
+                           🩺 Book Consultation
                         </button>
-                        <p className="text-xs text-orange-700 mt-4 font-medium">
-                           Connect with our on-call physician online instantly.
-                        </p>
+                        <button
+                           onClick={() => setTriageState('INPUT')}
+                           className="w-full py-3 text-gray-500 font-medium text-sm"
+                        >
+                           Try another symptom
+                        </button>
                      </div>
-
-                     <button
-                        onClick={() => setTriageState('INPUT')}
-                        className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-800 mt-4"
-                     >
-                        <ArrowLeft size={16} />
-                        Go back and edit symptoms
-                     </button>
                   </motion.div>
                )}
 
