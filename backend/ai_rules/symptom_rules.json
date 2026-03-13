@@ -1,0 +1,32 @@
+{
+  "rules": [
+    {
+      "symptoms": ["fever", "cough", "fatigue"],
+      "condition": "Possible Flu",
+      "severity": "medium",
+      "action": "Rest, fluids. See doctor if fever exceeds 3 days.",
+      "emergency": false
+    },
+    {
+      "symptoms": ["chest pain", "breathlessness"],
+      "condition": "Possible Cardiac Event",
+      "severity": "high",
+      "action": "Rush to hospital immediately.",
+      "emergency": true
+    },
+    {
+      "symptoms": ["rash", "itching"],
+      "condition": "Possible Allergic Reaction",
+      "severity": "medium",
+      "action": "Avoid further contact with allergens. Consult a doctor.",
+      "emergency": false
+    },
+    {
+      "symptoms": ["headache", "sensitivity to light"],
+      "condition": "Possible Migraine",
+      "severity": "low",
+      "action": "Rest in a dark, quiet room. See doctor if pain is persistent.",
+      "emergency": false
+    }
+  ]
+}

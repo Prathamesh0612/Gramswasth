@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans bg-white text-gray-800 antialiased;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Prevent text size adjust on mobile orientation change */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
+@layer components {
+  /* Card */
+  .gs-card {
+    @apply bg-cream-100 rounded-card shadow-card p-5;
+  }
+  /* Primary button */
+  .btn-primary {
+    @apply bg-sage-500 hover:bg-sage-600 active:bg-sage-700 text-white font-semibold
+           px-5 py-3.5 rounded-pill transition-all duration-200 
+           w-full text-center text-base leading-none
+           focus:outline-none focus:ring-2 focus:ring-sage-400 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+    min-height: 52px;
+  }
+  /* Secondary / outline button */
+  .btn-outline {
+    @apply border-2 border-sage-500 text-sage-600 hover:bg-sage-500 hover:text-white
+           font-semibold px-5 py-3 rounded-pill transition-all duration-200
+           w-full text-center text-base leading-none;
+    min-height: 52px;
+  }
+  /* Emergency button */
+  .btn-emergency {
+    @apply bg-terra-500 hover:bg-terra-600 active:bg-terra-600 text-white font-bold
+           px-6 py-4 rounded-card transition-all duration-200
+           focus:outline-none focus:ring-4 focus:ring-terra-400 focus:ring-offset-2
+           shadow-lg;
+    min-height: 60px;
+  }
+  /* Form input */
+  .gs-input {
+    @apply w-full border border-gray-200 rounded-xl bg-white px-4 py-3.5
+           text-base text-gray-800 placeholder-gray-400
+           focus:outline-none focus:ring-2 focus:ring-sage-400 focus:border-sage-400
+           transition-all duration-150;
+    min-height: 52px;
+  }
+  /* Nav item */
+  .nav-item {
+    @apply flex flex-col items-center justify-center gap-1 py-2 px-3
+           text-gray-500 text-xs font-medium transition-colors duration-150
+           hover:text-sage-600;
+  }
+  .nav-item.active {
+    @apply text-sage-600;
+  }
+  /* Action tile */
+  .action-tile {
+    @apply gs-card flex flex-col items-center justify-center gap-3
+           cursor-pointer hover:shadow-md active:scale-95
+           transition-all duration-150 text-center;
+    min-height: 120px;
+  }
+  /* Offline banner */
+  .offline-banner {
+    @apply bg-amber-100 border-b border-amber-300 text-amber-800
+           text-sm font-medium text-center py-2 px-4;
+  }
+  /* Status chip */
+  .chip {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-pill text-xs font-semibold;
+  }
+}
+
+@layer utilities {
+  .safe-top    { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-left   { padding-left: env(safe-area-inset-left); }
+  .safe-right  { padding-right: env(safe-area-inset-right); }
+  /* Fluid font scaling for rural accessibility */
+  .text-fluid-sm  { font-size: clamp(0.875rem, 2.5vw, 1rem); }
+  .text-fluid-base { font-size: clamp(1rem, 3vw, 1.125rem); }
+  .text-fluid-lg  { font-size: clamp(1.125rem, 3.5vw, 1.5rem); }
+  .text-fluid-xl  { font-size: clamp(1.5rem, 5vw, 2rem); }
+}
