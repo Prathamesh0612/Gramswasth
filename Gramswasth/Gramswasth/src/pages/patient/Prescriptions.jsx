@@ -1,36 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Leaf, Pill, Download, ChevronDown, Calendar, User, FileText } from 'lucide-react';
 import { usePatient } from '../../context/PatientContext';
-import { prescriptionAPI } from '../../services/api';
 import { jsPDF } from 'jspdf';
 
 export default function Prescriptions() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { profile } = usePatient();
-  const [prescriptions, setPrescriptions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const prescriptions = profile?.history || [];
   
   const [expandedIndex, setExpandedIndex] = useState(null);
-
-  useEffect(() => {
-    async function fetchPrescriptions() {
-      try {
-        const res = await prescriptionAPI.getAll();
-        if (res.success && res.data) {
-          setPrescriptions(res.data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch prescriptions", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPrescriptions();
-  }, []);
 
   const generatePDF = (p) => {
     const doc = new jsPDF();
@@ -116,12 +98,12 @@ export default function Prescriptions() {
                  <div className="w-10 h-10 bg-sage-100 rounded-xl flex items-center justify-center text-sage-600">
                     <FileText size={20} />
                  </div>
-                  <div>
-                    <div className="font-bold text-gray-800 text-sm">{p.doctor_name || 'Doctor'}</div>
+                 <div>
+                    <div className="font-bold text-gray-800 text-sm">{p.doctor}</div>
                     <div className="flex items-center gap-1.5 text-[10px] text-gray-400 font-medium">
-                       <Calendar size={10} /> {new Date(p.created_at).toLocaleDateString()}
+                       <Calendar size={10} /> {p.date}
                     </div>
-                  </div>
+                 </div>
               </div>
               <motion.div
                 animate={{ rotate: expandedIndex === index ? 180 : 0 }}

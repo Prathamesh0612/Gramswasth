@@ -4,6 +4,7 @@ Minimal resource usage - works completely offline
 """
 import json
 import os
+import requests
 from datetime import datetime
 
 class EnhancedAIService:
@@ -21,13 +22,17 @@ class EnhancedAIService:
         except FileNotFoundError:
             self.rules = []
     
-    def check_symptoms(self, symptoms, fuzzy=True):
+    def check_symptoms(self, symptoms, fuzzy=True, high_bandwidth=False):
         """
-        Check symptoms against rules with optional fuzzy matching
-        Returns condition, severity, action, and emergency status
+        Check symptoms against rules or via LLM if high bandwidth is available
         """
         if not symptoms:
             return self._no_match_response()
+            
+        if high_bandwidth:
+            llm_result = self.check_symptoms_llm(" ".join(symptoms))
+            if llm_result:
+                return llm_result
         
         # Normalize symptoms to lowercase
         normalized_symptoms = [s.lower().strip() for s in symptoms]
@@ -127,6 +132,34 @@ class EnhancedAIService:
             'offline_mode': True
         }
     
+    def check_symptoms_llm(self, symptom_text):
+        """Call local Ollama service for high-speed AI triage"""
+        try:
+            # Assuming Ollama is running locally for the hackathon
+            response = requests.post('http://localhost:11434/api/generate', 
+                json={
+                    "model": "gramswasth-triage",
+                    "prompt": symptom_text,
+                    "stream": False
+                }, timeout=5)
+            
+            if response.status_code == 200:
+                raw_json = response.json().get('response', '{}')
+                result = json.loads(raw_json)
+                
+                # Map LLM Output to app format
+                return {
+                    "condition": ", ".join(result.get("extracted_symptoms", ["Unknown"])),
+                    "severity": result.get("tier", "low"),
+                    "action": result.get("action", "smart_questionnaire"),
+                    "emergency": result.get("tier") == "critical",
+                    "is_llm": True
+                }
+        except Exception as e:
+            print(f"LLM Error: {e}")
+            return None
+        return None
+
     def get_severity_level(self, severity_str):
         """Get numeric severity level"""
         levels = {'low': 1, 'medium': 2, 'high': 3, 'critical': 4}

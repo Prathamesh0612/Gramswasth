@@ -2,44 +2,20 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Stethoscope, Video, MessageCircle, Heart, Brain, Eye, Baby, Bone, Loader2 } from 'lucide-react';
-import { consultationAPI } from '../../services/api';
+import { ArrowLeft, Stethoscope, Video, MessageCircle, Heart, Brain, Eye, Baby, Bone } from 'lucide-react';
 
 export default function SpecialistSelect() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedSpecialist, setSelectedSpecialist] = useState(null);
-  const [isCreating, setIsCreating] = useState(false);
-
-  const startConsultation = async (type) => {
-    if (!selectedSpecialist) return;
-    setIsCreating(true);
-    try {
-      const res = await consultationAPI.create({
-        specialization_id: selectedSpecialist.id,
-        type: type
-      });
-      if (res.success && res.data?.id) {
-        const path = type === 'video' ? '/patient/videocall' : '/patient/consultation';
-        navigate(path, { state: { consultationId: res.data.id } });
-      } else {
-        alert("Failed to start consultation: " + (res.error || 'Server error'));
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error starting consultation. Please try again.");
-    } finally {
-      setIsCreating(false);
-    }
-  };
 
   const SPECIALISTS = [
-    { id: 'general', name: t('spec_general', { defaultValue: 'General Physician' }), icon: Stethoscope, color: 'text-sage-600', bg: 'bg-sage-100', desc: t('spec_general_desc', { defaultValue: 'Common illnesses, fever, cold' }) },
-    { id: 'cardio', name: t('spec_cardio', { defaultValue: 'Cardiologist' }), icon: Heart, color: 'text-red-500', bg: 'bg-red-100', desc: t('spec_cardio_desc', { defaultValue: 'Heart, blood pressure' }) },
-    { id: 'pediatric', name: t('spec_pediatric', { defaultValue: 'Pediatrician' }), icon: Baby, color: 'text-blue-500', bg: 'bg-blue-100', desc: t('spec_pediatric_desc', { defaultValue: 'Children & infant care' }) },
-    { id: 'ortho', name: t('spec_ortho', { defaultValue: 'Orthopedist' }), icon: Bone, color: 'text-amber-600', bg: 'bg-amber-100', desc: t('spec_ortho_desc', { defaultValue: 'Bone, joint & muscle pain' }) },
-    { id: 'neuro', name: t('spec_neuro', { defaultValue: 'Neurologist' }), icon: Brain, color: 'text-purple-500', bg: 'bg-purple-100', desc: t('spec_neuro_desc', { defaultValue: 'Brain, nerves, headaches' }) },
-    { id: 'eye', name: t('spec_eye', { defaultValue: 'Ophthalmologist' }), icon: Eye, color: 'text-emerald-500', bg: 'bg-emerald-100', desc: t('spec_eye_desc', { defaultValue: 'Eye and vision problems' }) },
+    { id: 'general', name: t('spec_general') || 'General Physician', icon: Stethoscope, color: 'text-sage-600', bg: 'bg-sage-100', desc: t('spec_general_desc') || 'Common illnesses, fever, cold' },
+    { id: 'cardio', name: t('spec_cardio') || 'Cardiologist', icon: Heart, color: 'text-red-500', bg: 'bg-red-100', desc: t('spec_cardio_desc') || 'Heart, blood pressure' },
+    { id: 'pediatric', name: t('spec_pediatric') || 'Pediatrician', icon: Baby, color: 'text-blue-500', bg: 'bg-blue-100', desc: t('spec_pediatric_desc') || 'Children & infant care' },
+    { id: 'ortho', name: t('spec_ortho') || 'Orthopedist', icon: Bone, color: 'text-amber-600', bg: 'bg-amber-100', desc: t('spec_ortho_desc') || 'Bone, joint & muscle pain' },
+    { id: 'neuro', name: t('spec_neuro') || 'Neurologist', icon: Brain, color: 'text-purple-500', bg: 'bg-purple-100', desc: t('spec_neuro_desc') || 'Brain, nerves, headaches' },
+    { id: 'eye', name: t('spec_eye') || 'Ophthalmologist', icon: Eye, color: 'text-emerald-500', bg: 'bg-emerald-100', desc: t('spec_eye_desc') || 'Eye and vision problems' },
   ];
 
   return (
@@ -103,20 +79,18 @@ export default function SpecialistSelect() {
                 
                 <div className="flex gap-3">
                   <button 
-                    onClick={() => startConsultation('chat')}
-                    disabled={isCreating}
-                    className="flex-1 btn-outline flex-col !py-3 !rounded-2xl gap-1 active:bg-cream-100 disabled:opacity-50"
+                    onClick={() => navigate('/patient/consultation')}
+                    className="flex-1 btn-outline flex-col !py-3 !rounded-2xl gap-1 active:bg-cream-100"
                   >
                     <MessageCircle size={20} className="text-sage-600 mb-1" />
                     <span className="text-sm font-bold text-gray-800">{t('chatConsultation') || 'Chat Now'}</span>
                     <span className="text-xs text-gray-500 font-normal">Starts immediately</span>
                   </button>
                   <button 
-                    onClick={() => startConsultation('video')}
-                    disabled={isCreating}
-                    className="flex-1 btn-primary flex-col !py-3 !rounded-2xl gap-1 shadow-md shadow-sage-200 disabled:opacity-50"
+                    onClick={() => navigate('/patient/videocall')}
+                    className="flex-1 btn-primary flex-col !py-3 !rounded-2xl gap-1 shadow-md shadow-sage-200"
                   >
-                    {isCreating ? <Loader2 size={20} className="text-white mb-1 animate-spin" /> : <Video size={20} className="text-white mb-1" />}
+                    <Video size={20} className="text-white mb-1" />
                     <span className="text-sm font-bold text-white tracking-wide">{t('videoCallTitle') || 'Video Call'}</span>
                     <span className="text-xs text-sage-100 font-normal opacity-90">High quality</span>
                   </button>

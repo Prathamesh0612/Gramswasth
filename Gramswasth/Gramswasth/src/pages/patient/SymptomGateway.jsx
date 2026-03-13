@@ -32,10 +32,12 @@ export default function SymptomGateway() {
 
    const [transcript, setTranscript] = useState('');
    const [isListening, setIsListening] = useState(false);
-   const [triageState, setTriageState] = useState('INPUT'); // 'INPUT', 'CRITICAL', 'URGENT', 'LOCAL_RESULT'
+   const [triageState, setTriageState] = useState('INPUT'); // 'INPUT', 'CRITICAL', 'URGENT', 'LOCAL_RESULT', 'AI_RESULT'
    const [isCreating, setIsCreating] = useState(false);
+   const [isAnalyzing, setIsAnalyzing] = useState(false);
    const [bandwidth, setBandwidth] = useState('low'); // 'low', 'high'
    const [localResult, setLocalResult] = useState(null);
+   const [aiResult, setAiResult] = useState(null);
    const recognitionRef = useRef(null);
 
    const startEmergencyConsultation = async () => {
@@ -104,24 +106,79 @@ export default function SymptomGateway() {
       recognition.start();
    };
 
-   const handleAnalyze = () => {
+   const handleAnalyze = async () => {
       if (!transcript.trim()) return;
 
       // Check Bandwidth
       if (bandwidth === 'low') {
-         // USE LOCAL KNOWLEDGE CACHE
+         // USE LOCAL KNOWLEDGE CACHE - BEST MATCH LOGIC
          const words = transcript.toLowerCase().split(/\W+/);
-         const matched = DISEASES.find(d => 
-            d.keywords.some(k => words.includes(k.toLowerCase()))
-         );
+         
+         let bestMatch = null;
+         let maxMatches = 0;
 
-         if (matched) {
-            setLocalResult(matched);
+         DISEASES.forEach(d => {
+            const matchCount = d.keywords.filter(k => 
+               words.some(w => w.includes(k.toLowerCase()) || k.toLowerCase().includes(w))
+            ).length;
+
+            if (matchCount > maxMatches) {
+               maxMatches = matchCount;
+               bestMatch = d;
+            }
+         });
+
+         if (bestMatch && maxMatches > 0) {
+            setLocalResult(bestMatch);
             setTriageState('LOCAL_RESULT');
             return;
          }
+      } else {
+         // HIGH BANDWIDTH - CALL AI API
+         setIsAnalyzing(true);
+         try {
+            const { aiAPI } = await import('../../services/api');
+            const res = await aiAPI.checkSymptoms({ 
+               symptoms: [transcript],
+               bandwidth: 'high'
+            });
+            if (res.success && res.data) {
+               setAiResult(res.data);
+               setTriageState('AI_RESULT');
+               return;
+            }
+         } catch (err) {
+            console.error("AI Analysis failed:", err);
+            // Show a small hint that we fell back
+            alert("AI connection failed. Using local knowledge cache instead.");
+         } finally {
+            setIsAnalyzing(false);
+         }
       }
 
+      // Best Match Fallback (if bandwidth was high but it failed or no LLM response)
+      const words = transcript.toLowerCase().split(/\W+/);
+      let bestMatch = null;
+      let maxMatches = 0;
+
+      DISEASES.forEach(d => {
+         const matchCount = d.keywords.filter(k => 
+            words.some(w => w.includes(k.toLowerCase()) || k.toLowerCase().includes(w))
+         ).length;
+
+         if (matchCount > maxMatches) {
+            maxMatches = matchCount;
+            bestMatch = d;
+         }
+      });
+
+      if (bestMatch && maxMatches > 0) {
+         setLocalResult(bestMatch);
+         setTriageState('LOCAL_RESULT');
+         return;
+      }
+
+      // Fallback for both modes if no instant match
       // 1. Check Tier 1 (Critical) -> Triggers Red Ambulance UI
       const foundCritical = checkKeywords(transcript, criticalKeywords);
       if (foundCritical.length > 0) {
@@ -147,7 +204,7 @@ export default function SymptomGateway() {
             }
          });
       } else {
-         navigate('/patient/questionnaire');
+         navigate('/patient/questionnaire', { state: { text: transcript.toLowerCase() } });
       }
    };
 
@@ -159,10 +216,13 @@ export default function SymptomGateway() {
             </button>
             <div className="flex-1 flex flex-col">
                <h1 className="font-bold text-gray-800 leading-none">Symptom Assessment</h1>
-               <div className="flex items-center gap-1.5 mt-1" onClick={() => setBandwidth(b => b === 'low' ? 'high' : 'low')}>
-                  <div className={`w-1.5 h-1.5 rounded-full ${bandwidth === 'high' ? 'bg-green-500' : 'bg-amber-500'}`} />
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                     {bandwidth === 'high' ? 'High Speed: AI Active' : 'Low Speed: Local Cache'}
+               <div 
+                  className={`flex items-center gap-1.5 mt-1 px-2 py-0.5 rounded-full cursor-pointer transition-all ${bandwidth === 'high' ? 'bg-green-50' : 'bg-amber-50'}`} 
+                  onClick={() => setBandwidth(b => b === 'low' ? 'high' : 'low')}
+               >
+                  <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${bandwidth === 'high' ? 'bg-green-500' : 'bg-amber-500'}`} />
+                  <span className={`text-[10px] font-bold uppercase tracking-wider ${bandwidth === 'high' ? 'text-green-700' : 'text-amber-700'}`}>
+                     {bandwidth === 'high' ? 'AI Assessment Active' : 'Offline Mode: Local Cache'}
                   </span>
                </div>
             </div>
@@ -212,11 +272,11 @@ export default function SymptomGateway() {
                      <div className="flex flex-col gap-3">
                         <button
                            onClick={handleAnalyze}
-                           disabled={!transcript.trim()}
+                           disabled={!transcript.trim() || isAnalyzing}
                            className="w-full py-4 bg-sage-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-sage-700 transition-colors"
                         >
-                           <Zap size={18} />
-                           Analyze Symptoms
+                           {isAnalyzing ? <Loader2 size={18} className="animate-spin" /> : <Zap size={18} />}
+                           {isAnalyzing ? 'Analyzing with AI...' : 'Analyze Symptoms'}
                         </button>
 
                         <button
@@ -258,6 +318,70 @@ export default function SymptomGateway() {
                            className="w-full py-4 bg-sage-600 text-white rounded-xl font-bold"
                         >
                            🩺 Book Consultation
+                        </button>
+                        <button
+                           onClick={() => setTriageState('INPUT')}
+                           className="w-full py-3 text-gray-500 font-medium text-sm"
+                        >
+                           Try another symptom
+                        </button>
+                     </div>
+                  </motion.div>
+               )}
+
+               {/* AI RESULT STATE */}
+               {triageState === 'AI_RESULT' && aiResult && (
+                  <motion.div
+                     key="ai-stage"
+                     initial={{ opacity: 0, scale: 0.95 }}
+                     animate={{ opacity: 1, scale: 1 }}
+                     className="flex flex-col gap-5"
+                  >
+                     <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-center gap-3">
+                        <Zap className={`text-blue-500 ${aiResult.is_llm ? 'animate-pulse' : ''}`} size={20} />
+                        <span className="text-xs font-bold text-blue-800">
+                           {aiResult.is_llm ? 'Llama 3.1 Analysis Complete' : 'Enhanced AI Analysis Complete'}
+                        </span>
+                     </div>
+
+                     <div className="gs-card flex flex-col gap-3 border-2 border-blue-300">
+                        <div className="flex items-center justify-between">
+                           <h3 className="font-bold text-gray-900 text-lg capitalize">{aiResult.condition}</h3>
+                           <span className={`chip font-bold text-[10px] ${aiResult.severity === 'high' || aiResult.severity === 'critical' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`}>
+                              {aiResult.severity?.toUpperCase()}
+                           </span>
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed bg-white rounded-xl p-3 border border-blue-100">
+                           {aiResult.action === 'call_108' ? 'Critical condition detected. Please seek immediate help.' : aiResult.action}
+                        </p>
+                        
+                        {aiResult.health_tips && aiResult.health_tips.length > 0 && (
+                           <div className="mt-2 space-y-2">
+                              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Health Tips:</p>
+                              {aiResult.health_tips.slice(0, 3).map((tip, i) => (
+                                 <div key={i} className="flex items-start gap-2 text-xs text-gray-600">
+                                    <div className="w-1 h-1 rounded-full bg-blue-300 mt-1.5 flex-shrink-0" />
+                                    {tip}
+                                 </div>
+                              ))}
+                           </div>
+                        )}
+                     </div>
+
+                     <div className="flex flex-col gap-3">
+                        <button
+                           onClick={() => {
+                              if (aiResult.action === 'call_108') {
+                                 window.location.href = 'tel:108';
+                              } else if (aiResult.action === 'online_doctor_video') {
+                                 startEmergencyConsultation();
+                              } else {
+                                 navigate('/patient/consultation');
+                              }
+                           }}
+                           className={`w-full py-4 text-white rounded-xl font-bold shadow-lg ${aiResult.emergency ? 'bg-red-600' : 'bg-blue-600'}`}
+                        >
+                           {aiResult.emergency ? '🚨 Emergency Help' : '🩺 Get Consultation'}
                         </button>
                         <button
                            onClick={() => setTriageState('INPUT')}

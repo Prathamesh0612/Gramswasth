@@ -22,8 +22,10 @@ def create_app():
     # bcrypt.init_app(app)
     migrate.init_app(app, db)
 
-    # ── CORS (Broadened for Hackathon) ───────────────────────────────────────
+    # ── CORS (Dynamic for Hackathon) ─────────────────────────────────────────
     CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+    # Note: If credentials are used, flask-cors will echo the specific origin.
+    # We allow everything to ensure it doesn't block the frontend.
 
     # ── Initialize Cloudinary ───────────────────────────────────────────────
     with app.app_context():
@@ -72,6 +74,19 @@ def create_app():
     app.register_blueprint(sync_bp,          url_prefix='/api/sync')
     app.register_blueprint(medicine_bp,      url_prefix='/api/medicine')
     app.register_blueprint(health_bp,        url_prefix='/api')
+
+    @app.route('/')
+    def index():
+        return jsonify({
+            "status": "online",
+            "message": "GramHealth Backend is Running (Active)",
+            "version": "1.0.0",
+            "api_root": "/api"
+        })
+
+    @app.route('/health')
+    def health():
+        return jsonify({"status": "healthy"})
 
     # ── Socket events ─────────────────────────────────────────────────────────
     from .routes import sockets  # noqa: F401

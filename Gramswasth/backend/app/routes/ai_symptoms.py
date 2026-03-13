@@ -36,7 +36,8 @@ def check_symptoms_enhanced():
         return error("Please provide at least one symptom", 400)
     
     # Get enhanced diagnosis
-    diagnosis = enhanced_ai.check_symptoms(symptoms, fuzzy=True)
+    bandwidth = data.get('bandwidth', 'low')
+    diagnosis = enhanced_ai.check_symptoms(symptoms, fuzzy=True, high_bandwidth=(bandwidth == 'high'))
     
     # Add health tips
     diagnosis['health_tips'] = HealthTipGenerator.get_tips(diagnosis.get('condition', 'fever'))

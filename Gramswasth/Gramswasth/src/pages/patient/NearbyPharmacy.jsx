@@ -10,10 +10,12 @@ const STATIC_PHARMACIES = [
     village: 'Mandvi',
     distanceKm: 0.8,
     medicines: [
-      { key: 'Paracetamol', quantity: 50, price: 20 },
-      { key: 'Crocin', quantity: 30, price: 15 },
+      { key: 'Paracetamol 500mg', quantity: 50, price: 18 },
+      { key: 'Crocin Advance', quantity: 30, price: 15 },
       { key: 'Dolo 650', quantity: 0, price: 30 },
-      { key: 'Amoxicillin', quantity: 15, price: 45 }
+      { key: 'Amoxicillin', quantity: 15, price: 45 },
+      { key: 'Vicks Vaporub', quantity: 100, price: 60 },
+      { key: 'Digene Relief', quantity: 45, price: 12 }
     ]
   },
   {
@@ -22,9 +24,12 @@ const STATIC_PHARMACIES = [
     village: 'Bhuj',
     distanceKm: 4.2,
     medicines: [
+      { key: 'Paracetamol 500mg', quantity: 200, price: 22 },
       { key: 'Ibuprofen', quantity: 25, price: 35 },
       { key: 'Cetirizine', quantity: 100, price: 10 },
-      { key: 'Allegra', quantity: 12, price: 120 }
+      { key: 'Allegra 120mg', quantity: 12, price: 120 },
+      { key: 'B-Complex Caps', quantity: 500, price: 5 },
+      { key: 'Moov Gel', quantity: 20, price: 95 }
     ]
   },
   {
@@ -33,9 +38,26 @@ const STATIC_PHARMACIES = [
     village: 'Mundra',
     distanceKm: 1.5,
     medicines: [
-      { key: 'Metformin', quantity: 200, price: 5 },
-      { key: 'Amlodipine', quantity: 150, price: 8 },
-      { key: 'Atorvastatin', quantity: 80, price: 12 }
+      { key: 'Paracetamol 500mg', quantity: 1000, price: 12 },
+      { key: 'Metformin 500mg', quantity: 200, price: 5 },
+      { key: 'Amlodipine 5mg', quantity: 150, price: 8 },
+      { key: 'Atorvastatin 10mg', quantity: 80, price: 12 },
+      { key: 'ORS Sachet', quantity: 300, price: 4 },
+      { key: 'B-Complex Caps', quantity: 500, price: 2 }
+    ]
+  },
+  {
+    id: 4,
+    name: 'Swasthya Seva Center',
+    village: 'Anjar',
+    distanceKm: 2.8,
+    medicines: [
+      { key: 'Paracetamol 500mg', quantity: 80, price: 25 },
+      { key: 'Dolo 650', quantity: 40, price: 28 },
+      { key: 'Zifi 200', quantity: 10, price: 110 },
+      { key: 'Azee 500', quantity: 5, price: 75 },
+      { key: 'Cough Syrup (Wet)', quantity: 25, price: 85 },
+      { key: 'Cough Syrup (Dry)', quantity: 20, price: 90 }
     ]
   }
 ];

@@ -28,3 +28,6 @@ redis==5.0.1
 
 # Production Server
 gunicorn==21.2.0
+
+# Mock Data
+Faker==20.0.0

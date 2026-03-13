@@ -14,16 +14,23 @@ def get_my_records():
     records = HealthRecord.query.filter_by(patient_id=user_id).all()
     return success([r.to_dict() for r in records])
 
-@records_bp.route('/symptoms', methods=['POST'])
+@records_bp.route('', methods=['POST'])
 @jwt_required()
-def log_symptoms():
+def create_record():
+    """Create a new health record (generic)."""
     data = request.get_json()
     user_id = get_jwt_identity()
     
+    record_type = data.get('record_type', 'symptom_log')
+    record_data = data.get('data') or data.get('symptoms')
+    
+    if not record_data:
+        return error("No data provided", 400)
+    
     record = HealthRecord(
         patient_id=user_id,
-        record_type='symptom_log',
-        data=data.get('symptoms')
+        record_type=record_type,
+        data=record_data
     )
     
     db.session.add(record)
