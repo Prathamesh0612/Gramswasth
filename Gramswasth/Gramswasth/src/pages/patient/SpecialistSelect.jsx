@@ -34,12 +34,12 @@ export default function SpecialistSelect() {
   };
 
   const SPECIALISTS = [
-    { id: 'general', name: t('spec_general') || 'General Physician', icon: Stethoscope, color: 'text-sage-600', bg: 'bg-sage-100', desc: t('spec_general_desc') || 'Common illnesses, fever, cold' },
-    { id: 'cardio', name: t('spec_cardio') || 'Cardiologist', icon: Heart, color: 'text-red-500', bg: 'bg-red-100', desc: t('spec_cardio_desc') || 'Heart, blood pressure' },
-    { id: 'pediatric', name: t('spec_pediatric') || 'Pediatrician', icon: Baby, color: 'text-blue-500', bg: 'bg-blue-100', desc: t('spec_pediatric_desc') || 'Children & infant care' },
-    { id: 'ortho', name: t('spec_ortho') || 'Orthopedist', icon: Bone, color: 'text-amber-600', bg: 'bg-amber-100', desc: t('spec_ortho_desc') || 'Bone, joint & muscle pain' },
-    { id: 'neuro', name: t('spec_neuro') || 'Neurologist', icon: Brain, color: 'text-purple-500', bg: 'bg-purple-100', desc: t('spec_neuro_desc') || 'Brain, nerves, headaches' },
-    { id: 'eye', name: t('spec_eye') || 'Ophthalmologist', icon: Eye, color: 'text-emerald-500', bg: 'bg-emerald-100', desc: t('spec_eye_desc') || 'Eye and vision problems' },
+    { id: 'general', name: t('spec_general', { defaultValue: 'General Physician' }), icon: Stethoscope, color: 'text-sage-600', bg: 'bg-sage-100', desc: t('spec_general_desc', { defaultValue: 'Common illnesses, fever, cold' }) },
+    { id: 'cardio', name: t('spec_cardio', { defaultValue: 'Cardiologist' }), icon: Heart, color: 'text-red-500', bg: 'bg-red-100', desc: t('spec_cardio_desc', { defaultValue: 'Heart, blood pressure' }) },
+    { id: 'pediatric', name: t('spec_pediatric', { defaultValue: 'Pediatrician' }), icon: Baby, color: 'text-blue-500', bg: 'bg-blue-100', desc: t('spec_pediatric_desc', { defaultValue: 'Children & infant care' }) },
+    { id: 'ortho', name: t('spec_ortho', { defaultValue: 'Orthopedist' }), icon: Bone, color: 'text-amber-600', bg: 'bg-amber-100', desc: t('spec_ortho_desc', { defaultValue: 'Bone, joint & muscle pain' }) },
+    { id: 'neuro', name: t('spec_neuro', { defaultValue: 'Neurologist' }), icon: Brain, color: 'text-purple-500', bg: 'bg-purple-100', desc: t('spec_neuro_desc', { defaultValue: 'Brain, nerves, headaches' }) },
+    { id: 'eye', name: t('spec_eye', { defaultValue: 'Ophthalmologist' }), icon: Eye, color: 'text-emerald-500', bg: 'bg-emerald-100', desc: t('spec_eye_desc', { defaultValue: 'Eye and vision problems' }) },
   ];
 
   return (

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { pharmacyAPI } from '../../services/api';
+import { ArrowLeft, Leaf, Search, SlidersHorizontal, Loader2, MapPin, Package } from 'lucide-react';
 
 export default function NearbyPharmacy() {
   const { t } = useTranslation();
