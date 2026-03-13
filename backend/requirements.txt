@@ -1,3 +1,4 @@
+# Core Framework
 Flask==3.0.0
 Flask-SQLAlchemy==3.1.1
 Flask-Migrate==4.0.5
@@ -5,11 +6,25 @@ Flask-JWT-Extended==4.6.0
 Flask-SocketIO==5.3.6
 Flask-CORS==4.0.0
 Flask-Bcrypt==1.0.1
+
+# Environment & Config
 python-dotenv==1.0.0
+
+# Database
+psycopg2-binary==2.9.9
+SQLAlchemy>=2.0
+
+# Auth & Security
+PyJWT==2.8.0
+Werkzeug>=3.0
+
+# Media & Images
 cloudinary==1.38.0
-gunicorn==21.2.0
-eventlet==0.35.1
+Pillow
+
+# HTTP & Networking
 requests==2.31.0
 redis==5.0.1
-Pillow
-psycopg[binary]==3.3.3
+
+# Production Server
+gunicorn==21.2.0

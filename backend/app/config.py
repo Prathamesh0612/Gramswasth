@@ -5,7 +5,15 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-fallback')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///telehealth.db')
+
+    # Auto-fix database URL prefixes for psycopg2 compatibility
+    _raw_db_url = os.environ.get('DATABASE_URL', 'sqlite:///telehealth.db')
+    if _raw_db_url.startswith('postgresql+psycopg://'):
+        _raw_db_url = _raw_db_url.replace('postgresql+psycopg://', 'postgresql://', 1)
+    elif _raw_db_url.startswith('postgres://'):
+        _raw_db_url = _raw_db_url.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = _raw_db_url
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'jwt-fallback-secret-key-that-is-at-least-32-bytes-long')
     JWT_ACCESS_TOKEN_EXPIRES = 86400  # 24 hours
