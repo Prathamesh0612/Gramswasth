@@ -5,6 +5,8 @@
  * - Syncs when back online
  */
 
+import { API_BASE_URL as apiBase } from './api.js';
+const API_BASE_URL = apiBase || import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const POLL_INTERVAL = 1000; // Check for messages every 1 second
 
 class RedisChatService {
@@ -47,7 +49,7 @@ class RedisChatService {
       if (!consultationId || consultationId === 'undefined') return;
       if (this.isOnline) {
         try {
-          const res = await fetch(`http://localhost:5000/api/consultations/${consultationId}/messages`, {
+          const res = await fetch(`${API_BASE_URL}/consultations/${consultationId}/messages`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
           });
           if (res.ok) {
@@ -97,7 +99,7 @@ class RedisChatService {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/api/consultations/${consultationId}/message`, {
+      const res = await fetch(`${API_BASE_URL}/consultations/${consultationId}/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +146,7 @@ class RedisChatService {
     
     for (const message of queue) {
       try {
-        const res = await fetch(`http://localhost:5000/api/consultations/${message.consultation_id}/message`, {
+        const res = await fetch(`${API_BASE_URL}/consultations/${message.consultation_id}/message`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

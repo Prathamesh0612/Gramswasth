@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 // Adjust the base URL if your server runs on a different port or host
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 /**
  * A hook to read and write variables to the centralized database (PostgreSQL/JSON).

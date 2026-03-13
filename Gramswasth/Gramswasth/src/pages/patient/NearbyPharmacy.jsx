@@ -1,8 +1,44 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { pharmacyAPI } from '../../services/api';
 import { ArrowLeft, Leaf, Search, SlidersHorizontal, Loader2, MapPin, Package } from 'lucide-react';
+
+const STATIC_PHARMACIES = [
+  {
+    id: 1,
+    name: 'GramCare Pharmacy',
+    village: 'Mandvi',
+    distanceKm: 0.8,
+    medicines: [
+      { key: 'Paracetamol', quantity: 50, price: 20 },
+      { key: 'Crocin', quantity: 30, price: 15 },
+      { key: 'Dolo 650', quantity: 0, price: 30 },
+      { key: 'Amoxicillin', quantity: 15, price: 45 }
+    ]
+  },
+  {
+    id: 2,
+    name: 'Kutch Medical Store',
+    village: 'Bhuj',
+    distanceKm: 4.2,
+    medicines: [
+      { key: 'Ibuprofen', quantity: 25, price: 35 },
+      { key: 'Cetirizine', quantity: 100, price: 10 },
+      { key: 'Allegra', quantity: 12, price: 120 }
+    ]
+  },
+  {
+    id: 3,
+    name: 'Jan Aushadhi Kendra',
+    village: 'Mundra',
+    distanceKm: 1.5,
+    medicines: [
+      { key: 'Metformin', quantity: 200, price: 5 },
+      { key: 'Amlodipine', quantity: 150, price: 8 },
+      { key: 'Atorvastatin', quantity: 80, price: 12 }
+    ]
+  }
+];
 
 export default function NearbyPharmacy() {
   const { t } = useTranslation();
@@ -10,24 +46,9 @@ export default function NearbyPharmacy() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('distance_asc');
   
-  const [pharmacies, setPharmacies] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [pharmacies, setPharmacies] = useState(STATIC_PHARMACIES);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await pharmacyAPI.getAll();
-        if (res.success && res.data) {
-          setPharmacies(res.data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch pharmacies', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, []);
 
   let filtered = pharmacies.map(p => ({
     ...p,

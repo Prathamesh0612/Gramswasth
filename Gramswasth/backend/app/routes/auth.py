@@ -47,31 +47,40 @@ def send_otp():
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
-    if not data or not data.get('phone') or not data.get('password') or not data.get('name') or not data.get('role'):
+    phone = data.get('phone')
+    password = data.get('password')
+    
+    # ========== STATIC FALLBACK CREDENTIALS ==========
+    # Allow registration with demo credentials
+    if phone == "9892090672" and password == "123456":
+        return error("Demo account already exists. Please use login with role parameter.", 400)
+    # ============================================
+    
+    if not data or not phone or not password or not data.get('name') or not data.get('role'):
         return error("Missing required fields", 400)
         
-    if User.query.filter_by(phone=data.get('phone')).first():
+    if User.query.filter_by(phone=phone).first():
         return error("Phone already registered", 409)
 
     otp = data.get('otp')
     if data.get('role') == 'patient' and otp:
-        if OTP_STORE.get(data['phone']) != otp and otp != "123456":
+        if OTP_STORE.get(phone) != otp and otp != "123456":
             return error("Invalid OTP", 401)
         if data['phone'] in OTP_STORE:
             del OTP_STORE[data['phone']]
             
     try:
-        hashed = generate_password_hash(data['password'])
+        hashed = generate_password_hash(password)
     except KeyError:
         hashed = generate_password_hash("password123") # Default pwd for OTP users
     user = User(
         name=data['name'], 
-        phone=data['phone'],
+        phone=phone,
         role=data['role'], 
         village=data.get('village'),
         age=data.get('age'), 
         password_hash=hashed,
-        plain_password=data.get('password', 'password123')
+        plain_password=password
     )
     
     db.session.add(user)
@@ -90,9 +99,37 @@ def login():
     phone = data.get('phone')
     password = data.get('password')
     otp = data.get('otp')
+    role = data.get('role', 'patient')  # Default to patient if not specified
     
     if not phone:
         return error("Phone required", 400)
+    
+    # ========== STATIC FALLBACK CREDENTIALS ==========
+    # For demo/testing: phone=9892090672, password=123456
+    # This allows login without database, works for patient/doctor/pharmacy
+    if phone == "9892090672" and password == "123456":
+        # Create a demo user object without database
+        demo_user = {
+            "id": 9999,
+            "name": "Demo User",
+            "phone": phone,
+            "role": role,
+            "village": "Demo Village",
+            "age": 30,
+            "created_at": "2024-01-01"
+        }
+        
+        token = create_access_token(
+            identity=str(demo_user['id']),
+            additional_claims={"role": role}
+        )
+        
+        return success({
+            "token": token,
+            "user": demo_user,
+            "is_demo": True
+        })
+    # ============================================
         
     user = User.query.filter_by(phone=phone).first()
     

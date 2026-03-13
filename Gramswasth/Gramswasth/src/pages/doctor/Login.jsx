@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Leaf, WifiOff } from 'lucide-react';
+import { ArrowLeft, Leaf, WifiOff, Zap } from 'lucide-react';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { authAPI } from '../../services/api';
 
@@ -24,7 +24,7 @@ export default function DoctorLogin() {
     }
 
     try {
-      const res = await authAPI.login({ phone, password });
+      const res = await authAPI.login({ phone, password, role: 'doctor' });
       if (res.success && res.data?.token && res.data?.user?.id) {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('userId', res.data.user.id);
@@ -37,6 +37,23 @@ export default function DoctorLogin() {
       alert("Login failed: " + (err.message || 'Invalid credentials'));
     }
   };
+
+  const quickDemoLogin = async () => {
+    try {
+      const res = await authAPI.login({ phone: '9892090672', password: '123456', role: 'doctor' });
+      if (res.success && res.data?.token && res.data?.user?.id) {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('userId', res.data.user.id);
+        localStorage.setItem('role', 'doctor');
+        navigate('/doctor/dashboard');
+      } else {
+        throw new Error(res.error || 'Demo login failed');
+      }
+    } catch (err) {
+      alert("Demo login failed: " + (err.message || 'Invalid credentials'));
+    }
+  };
+
   return (
     <div className="min-h-dvh bg-white flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-cream-200 pt-safe-top">
@@ -65,6 +82,14 @@ export default function DoctorLogin() {
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="gs-input" placeholder="••••••••" />
           </div>
           <button className="btn-primary" onClick={handleLogin}>Login as Doctor</button>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 h-px bg-gray-200"></div>
+            <span className="text-xs text-gray-400">or</span>
+            <div className="flex-1 h-px bg-gray-200"></div>
+          </div>
+          <button className="flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-semibold py-2.5 rounded-lg transition-all" onClick={quickDemoLogin}>
+            <Zap size={16} /> Demo Login
+          </button>
         </div>
         <p className="text-xs text-gray-400 flex items-center gap-1.5"><WifiOff size={12} /> {t('offlineNote')}</p>
       </div>

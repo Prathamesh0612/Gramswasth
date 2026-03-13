@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Phone, Hash, Leaf, WifiOff, ArrowLeft, User, Calendar, MapPin, Map, ChevronRight, ChevronLeft, Heart, AlertCircle, Pill, UserCheck } from 'lucide-react';
+import { Phone, Hash, Leaf, WifiOff, ArrowLeft, User, Calendar, MapPin, Map, ChevronRight, ChevronLeft, Heart, AlertCircle, Pill, UserCheck, Zap } from 'lucide-react';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { usePatient } from '../../context/PatientContext';
 import { authAPI } from '../../services/api';
@@ -199,6 +199,28 @@ export default function PatientLogin() {
     }
   };
 
+  const quickDemoLogin = async () => {
+    try {
+      const res = await authAPI.login({ phone: '9892090672', password: '123456', role: 'patient' });
+      if (res.success && res.data?.token && res.data?.user?.id) {
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('userId', res.data.user.id);
+        localStorage.setItem('role', 'patient');
+        
+        updateProfile({ 
+          phone: '9892090672', 
+          name: res.data.user?.name || 'Demo Patient', 
+          village: res.data.user?.village || 'Demo Village' 
+        });
+        navigate('/patient/dashboard');
+      } else {
+        throw new Error(res.error || 'Demo login failed');
+      }
+    } catch (err) {
+      alert("Demo login failed: " + (err.message || 'Invalid credentials'));
+    }
+  };
+
   return (
     <div className="min-h-dvh bg-white flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-cream-200 pt-safe-top">
@@ -241,6 +263,14 @@ export default function PatientLogin() {
               {!otpSent
                 ? <button className="btn-primary" onClick={sendOtpForLogin}>{t('getOtp')} / OTP प्राप्त करें</button>
                 : <button className="btn-primary" onClick={handleLogin}>{t('verify')}</button>}
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-px bg-gray-200"></div>
+                <span className="text-xs text-gray-400">or</span>
+                <div className="flex-1 h-px bg-gray-200"></div>
+              </div>
+              <button className="flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-semibold py-2.5 rounded-lg transition-all" onClick={quickDemoLogin}>
+                <Zap size={16} /> Demo Login
+              </button>
               <p className="text-center text-sm text-gray-500">{t('newHere')}{' '}
                 <button className="text-sage-600 font-semibold" onClick={() => setTab('register')}>{t('registerHere')}</button>
               </p>

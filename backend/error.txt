@@ -1,0 +1,519 @@
+﻿python : C:\Users\agraw\Downl
+oads\hckerthon\backend\seed_m
+ock.py:129: 
+DeprecationWarning: 
+datetime.datetime.utcnow() 
+is deprecated and scheduled 
+for removal in a future 
+version. Use timezone-aware 
+objects to represent 
+datetimes in UTC: datetime.da
+tetime.now(datetime.UTC).
+At line:1 char:1
++ python seed_mock.py 2> 
+error.log
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~
+    + CategoryInfo           
+   : NotSpecified: (C:\User  
+  s\agraw\...(datetime.UTC   
+ ).:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+  consult_date = 
+datetime.utcnow() - 
+timedelta(days=days_ago)
+Traceback (most recent call 
+last):
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\b
+ase.py", line 2125, in 
+_exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\d
+efault.py", line 952, in 
+do_execute
+    
+cursor.execute(statement, 
+parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+^^^^^^^^^^^^
+psycopg2.errors.ForeignKeyVio
+lation: insert or update on 
+table "health_records" 
+violates foreign key 
+constraint "health_records_pa
+tient_id_fkey"
+DETAIL:  Key (patient_id)=(e0
+abdfcd-d6a5-4ca4-a665-9d327bb
+81f1b) is not present in 
+table "users".
+
+
+The above exception was the 
+direct cause of the 
+following exception:
+
+Traceback (most recent call 
+last):
+  File "C:\Users\agraw\Downlo
+ads\hckerthon\backend\seed_mo
+ck.py", line 208, in <module>
+    seed_db()
+    ~~~~~~~^^
+  File "C:\Users\agraw\Downlo
+ads\hckerthon\backend\seed_mo
+ck.py", line 204, in seed_db
+    db.session.commit()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\scop
+ing.py", line 597, in commit
+    return 
+self._proxied.commit()
+           
+~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\sess
+ion.py", line 2030, in commit
+    
+trans.commit(_to_root=True)
+    
+~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, 
+in commit
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\stat
+e_changes.py", line 137, in 
+_go
+    ret_value = fn(self, 
+*arg, **kw)
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\sess
+ion.py", line 1311, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, 
+in _prepare_impl
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\stat
+e_changes.py", line 137, in 
+_go
+    ret_value = fn(self, 
+*arg, **kw)
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\sess
+ion.py", line 1286, in 
+_prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\sess
+ion.py", line 4331, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\sess
+ion.py", line 4466, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\util\lan
+ghelpers.py", line 224, in 
+__exit__
+    raise exc_value.with_trac
+eback(exc_tb)
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\sess
+ion.py", line 4427, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\unit
+ofwork.py", line 466, in 
+execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\unit
+ofwork.py", line 642, in 
+execute
+    util.preloaded.orm_persis
+tence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper
+_hierarchy(self.mapper, 
+False, False),
+        ^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\pers
+istence.py", line 93, in 
+save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\orm\pers
+istence.py", line 1048, in 
+_emit_insert_statements
+    result = 
+connection.execute(
+        statement, 
+multiparams, execution_option
+s=execution_options
+    )
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\b
+ase.py", line 1419, in 
+execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or 
+NO_OPTIONS,
+    )
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\sql\elem
+ents.py", line 527, in 
+_execute_on_connection
+    return connection._execut
+e_clauseelement(
+           ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~^
+        self, 
+distilled_params, 
+execution_options
+        ^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\b
+ase.py", line 1641, in 
+_execute_clauseelement
+    ret = 
+self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\b
+ase.py", line 1844, in 
+_execute_context
+    return self._exec_insertm
+any_context(dialect, context)
+           ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\b
+ase.py", line 2133, in 
+_exec_insertmany_context
+    
+self._handle_dbapi_exception(
+    
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e,
+        ^^
+    ...<4 lines>...
+        is_sub_exec=True,
+        ^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\b
+ase.py", line 2363, in 
+_handle_dbapi_exception
+    raise sqlalchemy_exceptio
+n.with_traceback(exc_info[2])
+ from e
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\b
+ase.py", line 2125, in 
+_exec_insertmany_context
+    dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<2 lines>...
+        context,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Python314\Lib\site
+-packages\sqlalchemy\engine\d
+efault.py", line 952, in 
+do_execute
+    
+cursor.execute(statement, 
+parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^
+^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError
+: (psycopg2.errors.ForeignKey
+Violation) insert or update 
+on table "health_records" 
+violates foreign key 
+constraint "health_records_pa
+tient_id_fkey"
+DETAIL:  Key (patient_id)=(e0
+abdfcd-d6a5-4ca4-a665-9d327bb
+81f1b) is not present in 
+table "users".
+
+
+[parameters: 
+{'record_type__0': 
+'diagnosis', 'image_url__0': 
+None, 'data__0': 
+'{"blood_pressure": 
+"137/83", "temperature": 
+"98.6 F", "diagnosis": "Eye 
+Infection"}', 'id__0': '29f7c
+6d1-60e0-41ef-82fe-a3732a16be
+2a', 'created_at__0': 
+datetime.datetime(2025, 3, 
+25, 3, 39, 0, 473020), 
+'patient_id__0': 'e0abdfcd-d6
+a5-4ca4-a665-9d327bb81f1b', 
+'record_type__1': 
+'diagnosis', 'image_url__1': 
+None, 'data__1': 
+'{"blood_pressure": 
+"124/88", "temperature": 
+"98.6 F", "diagnosis": "High 
+BP"}', 'id__1': 'be969bed-f45
+6-427a-87a9-1cdc95aaadf2', 
+'created_at__1': 
+datetime.datetime(2025, 9, 
+9, 3, 39, 0, 473576), 
+'patient_id__1': 'f0da64a3-56
+dc-4308-982c-5bc31ff0dc91', 
+'record_type__2': 
+'diagnosis', 'image_url__2': 
+None, 'data__2': 
+'{"blood_pressure": 
+"110/88", "temperature": 
+"98.6 F", "diagnosis": 
+"Headache"}', 'id__2': '99f97
+05b-0052-4473-aab1-1c0e0e1630
+31', 'created_at__2': 
+datetime.datetime(2025, 9, 
+10, 3, 39, 0, 474813), 
+'patient_id__2': '17c94fd3-f0
+ae-4b4e-be2a-e05599086a03', 
+'record_type__3': 
+'diagnosis', 'image_url__3': 
+None, 'data__3': 
+'{"blood_pressure": 
+"117/73", "temperature": 
+"98.6 F", "diagnosis": "Skin 
+Rash"}', 'id__3': '9f07792b-7
+11c-4b68-b1c9-1e36c9b396da', 
+'created_at__3': 
+datetime.datetime(2026, 1, 
+14, 3, 39, 0, 475152), 
+'patient_id__3': '37e17612-ba
+62-4b4d-82e7-6d722a57e500', 
+'record_type__4': 
+'diagnosis', 'image_url__4': 
+None, 'data__4': 
+'{"blood_pressure": 
+"112/75", "temperature": 
+"98.6 F", "diagnosis": 
+"Fever"}', 'id__4': '56e0a93b
+-31ba-4e86-ac33-00b9844c65e7'
+, 'created_at__4': 
+datetime.datetime(2025, 5, 
+7, 3, 39, 0, 475334), 
+'patient_id__4': '417157eb-9c
+91-49aa-ba01-2d832db68dc1', 
+'record_type__5': 
+'diagnosis', 'image_url__5': 
+None, 'data__5': 
+'{"blood_pressure": 
+"110/90", "temperature": 
+"98.6 F", "diagnosis": "High 
+BP"}', 'id__5': '8268192b-81c
+9-48f9-b6a8-dc9ce73e492e', 
+'created_at__5': 
+datetime.datetime(2025, 7, 
+20, 3, 39, 0, 476435), 
+'patient_id__5': 'f7f6aa1a-f5
+cc-4193-82bd-83250744c3c4', 
+'record_type__6': 
+'diagnosis', 'image_url__6': 
+None, 'data__6': 
+'{"blood_pressure": 
+"132/79", "temperature": 
+"98.6 F", "diagnosis": "Skin 
+Rash"}', 'id__6': '295fcbf6-3
+4ee-41b6-926a-59d1d25de9dd', 
+'created_at__6': 
+datetime.datetime(2025, 10, 
+5, 3, 39, 0, 476617), 
+'patient_id__6': '21c4bb36-12
+c3-4e17-a73e-81723f7f3646', 
+'record_type__7': 
+'diagnosis', 'image_url__7': 
+None, 'data__7': 
+'{"blood_pressure": 
+"110/79", "temperature": 
+"98.6 F", "diagnosis": 
+"Headache"}', 'id__7': '5d715
+9b2-bf3f-4a32-b542-0405716bb1
+2c', 'created_at__7': 
+datetime.datetime(2025, 8, 
+13, 3, 39, 0, 482357), 
+'patient_id__7': 'baa5f65d-10
+09-4bd9-bf39-087b5622e837', 
+'record_type__8': 
+'diagnosis', 'image_url__8': 
+None ... 392 parameters 
+truncated ... 
+'created_at__73': 
+datetime.datetime(2025, 9, 
+18, 3, 39, 0, 510477), 
+'patient_id__73': '4d6e1792-e
+d0e-465a-aa90-4c60b33cf7ea', 
+'record_type__74': 
+'diagnosis', 
+'image_url__74': None, 
+'data__74': 
+'{"blood_pressure": 
+"132/86", "temperature": 
+"98.6 F", "diagnosis": 
+"Joint Pain"}', 'id__74': '81
+4e2f94-9a5b-48d9-910b-4a4b705
+c1897', 'created_at__74': 
+datetime.datetime(2025, 10, 
+27, 3, 39, 0, 510855), 
+'patient_id__74': '836bc130-1
+de5-4193-aabb-42cfef352467', 
+'record_type__75': 
+'diagnosis', 
+'image_url__75': None, 
+'data__75': 
+'{"blood_pressure": 
+"136/84", "temperature": 
+"98.6 F", "diagnosis": "Skin 
+Rash"}', 'id__75': 'ffcf2d56-
+8e26-441e-80a1-e774bac977e7',
+ 'created_at__75': 
+datetime.datetime(2025, 5, 
+26, 3, 39, 0, 511060), 
+'patient_id__75': 'ad9dd055-f
+d39-4dbf-9a16-a23bcad676d6', 
+'record_type__76': 
+'diagnosis', 
+'image_url__76': None, 
+'data__76': 
+'{"blood_pressure": 
+"120/74", "temperature": 
+"98.6 F", "diagnosis": 
+"Fever"}', 'id__76': '5d2feb8
+1-435c-4cb9-9ec5-37d26fb390fb
+', 'created_at__76': 
+datetime.datetime(2025, 3, 
+28, 3, 39, 0, 511901), 
+'patient_id__76': '4d6e1792-e
+d0e-465a-aa90-4c60b33cf7ea', 
+'record_type__77': 
+'diagnosis', 
+'image_url__77': None, 
+'data__77': 
+'{"blood_pressure": 
+"135/87", "temperature": 
+"98.6 F", "diagnosis": 
+"Cough"}', 'id__77': '1b42ba9
+d-aa01-4afb-97c3-b3f06a3622dd
+', 'created_at__77': 
+datetime.datetime(2025, 4, 
+21, 3, 39, 0, 512421), 
+'patient_id__77': 'a80f5845-d
+5cd-4b2f-9fc7-a2f02b03a0c4', 
+'record_type__78': 
+'diagnosis', 
+'image_url__78': None, 
+'data__78': 
+'{"blood_pressure": 
+"132/81", "temperature": 
+"98.6 F", "diagnosis": 
+"Headache"}', 'id__78': '31c6
+2d54-24c4-4552-847f-efd141027
+eba', 'created_at__78': 
+datetime.datetime(2026, 1, 
+27, 3, 39, 0, 513550), 
+'patient_id__78': '1023e080-b
+90c-46eb-9095-674cff2c38e8', 
+'record_type__79': 
+'diagnosis', 
+'image_url__79': None, 
+'data__79': 
+'{"blood_pressure": 
+"113/83", "temperature": 
+"98.6 F", "diagnosis": "Eye 
+Infection"}', 'id__79': '5da9
+4974-de7e-4dc9-bc5d-cf10f886f
+b5a', 'created_at__79': 
+datetime.datetime(2025, 4, 
+20, 3, 39, 0, 514001), 
+'patient_id__79': '703a0806-a
+a78-4c23-8408-94b92b485e54', 
+'record_type__80': 
+'diagnosis', 
+'image_url__80': None, 
+'data__80': 
+'{"blood_pressure": 
+"132/71", "temperature": 
+"98.6 F", "diagnosis": 
+"Cough"}', 'id__80': 'fc07c93
+b-3c94-4267-b528-c0e86f88d3e4
+', 'created_at__80': 
+datetime.datetime(2025, 8, 
+1, 3, 39, 0, 514653), 
+'patient_id__80': '57a9680b-d
+472-4f84-b300-14229d472b53', 
+'record_type__81': 
+'diagnosis', 
+'image_url__81': None, 
+'data__81': 
+'{"blood_pressure": 
+"118/71", "temperature": 
+"98.6 F", "diagnosis": "Skin 
+Rash"}', 'id__81': 'b9c2523b-
+b484-4028-8c23-a54b45a7b524',
+ 'created_at__81': 
+datetime.datetime(2025, 12, 
+27, 3, 39, 0, 515069), 
+'patient_id__81': 'c505cbff-6
+083-4320-9982-090c6622e2c6'}]
+(Background on this error 
+at: https://sqlalche.me/e/20/
+gkpj)

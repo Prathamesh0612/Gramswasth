@@ -34,6 +34,31 @@ def add_medicine():
     
     return success(medicine.to_dict(), 201)
 
+@pharmacy_bp.route('/all', methods=['GET'])
+def get_all_pharmacies():
+    from app.models.user import User
+    # Find all users with role 'pharmacy'
+    pharmacies = User.query.filter_by(role='pharmacy').all()
+    
+    result = []
+    for p in pharmacies:
+        pd = p.to_dict()
+        import random
+        pd['distanceKm'] = round(random.uniform(0.5, 10.0), 1) # Mock distance for UI
+        # Get medicines for this pharmacy
+        meds = Medicine.query.filter_by(pharmacy_id=p.id).all()
+        # Frontend expects 'key' instead of 'name' and 'quantity'
+        pd['medicines'] = [{
+            'id': str(m.id),
+            'key': m.name,
+            'name': m.name,
+            'quantity': m.quantity,
+            'price': float(m.price) if m.price else 0
+        } for m in meds]
+        result.append(pd)
+        
+    return success(result)
+
 @pharmacy_bp.route('/search', methods=['GET'])
 def search_medicines():
     name = request.args.get('name', '')
